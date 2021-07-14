@@ -18,6 +18,12 @@ process.on('unhandledException', (reason, p) => {
     throw reason;
 });
 
+const data = require("./lib/data");
+
+data.createCollection("/tickets", "tickets", {hello: "world2"}, (err, success) => {
+    console.log(err, success)
+}, logger)
+
 //Server listen
 const PORT = 6969
 server.listen(PORT, () => {
