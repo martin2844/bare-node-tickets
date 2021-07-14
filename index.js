@@ -1,33 +1,14 @@
-//Require modules from node
-
-const http = require('http');
-const url = require("url");
+const server = require('./lib/server')
 const LoggerService = require("./lib/logger");
-const logger = new LoggerService();
+const logger = new LoggerService(module);
 
-const server = http.createServer((req, res) => {
 
-    //Get the URL and parse it
-    const parsedUrl = url.parse(req.url, true);
+//Initialize Server
+server.init(logger)
 
-    //Get the Path requested
-    const requestedPath = parsedUrl.pathname;
-    const trimmedPath = requestedPath.replace(/^\/+|\/+$/g, "");
 
-    //Get Query String parameters
-    const queryStringObject = parsedUrl.query;
-    
-    //Get Headers
-    const headers = req.headers;
-    
-    //Get HTTP method
-    const method = req.method;
-    
-    //Send the response
-
-    //Log the path to file
-    logger.info(method + " " + parsedUrl.pathname + (parsedUrl.search ?? ""))
-    res.end(parsedUrl.pathname);
+server.get("/home", () => {
+    console.log("EXECUTING CALLBACK FUNCTION");
 })
 
 
@@ -42,7 +23,23 @@ process.on('unhandledException', (reason, p) => {
 });
 
 const PORT = 6969
-
 server.listen(PORT, () => {
     logger.info("Server Started and Listening @ " + PORT)
 })
+
+
+const handlers = {}
+
+handlers.sample = (data, callback) => {
+    //callback http status code and a a payload object
+    callback(200, {"test": "sample handler"})
+}
+
+handlers.notFound = (data, callback) => {
+    callback(404)
+}
+
+
+const router = {
+    'sample': handlers.sample 
+}
