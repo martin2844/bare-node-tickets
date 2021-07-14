@@ -26,14 +26,23 @@ const server = http.createServer((req, res) => {
     //Send the response
 
     //Log the path to file
-    console.log("info:* " + method + " " + parsedUrl.pathname + (parsedUrl.search ?? ""))
-    logger.log("info", method + " " + parsedUrl.pathname + (parsedUrl.search ?? ""))
+    logger.info(method + " " + parsedUrl.pathname + (parsedUrl.search ?? ""))
     res.end(parsedUrl.pathname);
 })
+
+
+process.on('unhandledRejection', (reason, p) => {
+    logger.error('exception occurred \n' + JSON.stringify(reason) );
+    throw reason;
+});
+
+process.on('unhandledException', (reason, p) => {
+    logger.error('exception occurred \n' + JSON.stringify(reason));
+    throw reason;
+});
 
 const PORT = 6969
 
 server.listen(PORT, () => {
-    logger.log("info", "Server Started and Listening @ " + PORT)
-    console.log("info:* Server Started and Listening @ " + PORT)
+    logger.info("Server Started and Listening @ " + PORT)
 })
